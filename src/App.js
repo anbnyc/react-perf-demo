@@ -8,17 +8,22 @@ const URL_STATION_INFO =
 
 export default function App() {
   const [count, setCount] = useState(0);
-  const [stations, setStations] = useState([]);
-  const [stationsMeta, setStationsMeta] = useState([]);
+  const [{ stations, stationsMeta }, setStations] = useState({
+    stations: [],
+    stationsMeta: [],
+  });
 
   useEffect(() => {
     function doFetch() {
-      fetch(URL_STATION_STATUS)
-        .then((res) => res.json())
-        .then((statusJson) => setStations(statusJson.data.stations));
-      fetch(URL_STATION_INFO)
-        .then((res) => res.json())
-        .then((infoJson) => setStationsMeta(infoJson.data.stations));
+      Promise.all([
+        fetch(URL_STATION_STATUS).then((res) => res.json()),
+        fetch(URL_STATION_INFO).then((res) => res.json()),
+      ]).then(([statusJson, infoJson]) => {
+        setStations({
+          stations: statusJson.data.stations,
+          stationsMeta: infoJson.data.stations,
+        });
+      });
     }
     function doCount() {
       setCount((c) => c + 1);
