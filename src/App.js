@@ -1,5 +1,5 @@
 import { DataTable } from "./DataTable";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 const URL_STATION_STATUS =
   "https://gbfs.citibikenyc.com/gbfs/en/station_status.json";
@@ -40,22 +40,30 @@ export default function App() {
     };
   }, []);
 
-  const stationsMetaLookup = Object.fromEntries(
-    stationsMeta.map((station) => [station.station_id, station.name])
+  const stationsMetaLookup = useMemo(
+    () =>
+      Object.fromEntries(
+        stationsMeta.map((station) => [station.station_id, station.name])
+      ),
+    [stationsMeta]
   );
 
-  const data = stations.map((station) => {
-    return {
-      id: station.station_id,
-      station: stationsMetaLookup[station.station_id] || "missing name",
-      docksAvailable: station.num_docks_available,
-      bikesAvailable: station.num_bikes_available,
-      ebikesAvailable: station.num_ebikes_available,
-      bikesDisabled: station.num_bikes_disabled,
-    };
-  });
+  const data = useMemo(
+    () =>
+      stations.map((station) => {
+        return {
+          id: station.station_id,
+          station: stationsMetaLookup[station.station_id] || "missing name",
+          docksAvailable: station.num_docks_available,
+          bikesAvailable: station.num_bikes_available,
+          ebikesAvailable: station.num_ebikes_available,
+          bikesDisabled: station.num_bikes_disabled,
+        };
+      }),
+    [stationsMetaLookup, stations]
+  );
 
-  const summary = (() => {
+  const summary = useMemo(() => {
     if (!stations) {
       // TODO constant
       return {};
@@ -81,7 +89,7 @@ export default function App() {
       initSummary.station += 1;
     });
     return initSummary;
-  })();
+  }, [stations]);
 
   return (
     <div className="App">
