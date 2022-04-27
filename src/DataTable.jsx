@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 const fmt = (n) => {
   const strN = String(n);
@@ -11,7 +11,10 @@ export const DataTable = ({ data, summary }) => {
   const [page, setPage] = useState(0);
   const headers = data[0] ? Object.keys(data[0]).slice(1) : [];
 
-  const pageData = data;
+  const pageData = useMemo(
+    () => data.slice(page * PAGE_LENGTH, page * PAGE_LENGTH + PAGE_LENGTH),
+    [data, page]
+  );
 
   return (
     <div>
