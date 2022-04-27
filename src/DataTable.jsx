@@ -19,12 +19,9 @@ export const DataTable = ({ data, summary }) => {
   return (
     <div>
       <div>
-        <button onClick={() => setPage(Math.max(0, page - 1))} disabled>
-          prev
-        </button>
+        <button onClick={() => setPage(Math.max(0, page - 1))}>prev</button>
         <span>page {page}</span>
         <button
-          disabled
           onClick={() =>
             setPage(
               Math.min(page + 1, Math.ceil(data.length / PAGE_LENGTH) - 1)
